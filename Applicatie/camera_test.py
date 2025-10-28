@@ -9,8 +9,13 @@ if not cap.isOpened():
     print("Kan de camera niet openen.")
     exit()
 
+frame_count = 0
+last_results = []
+
 while True:
     ret, frame = cap.read()
+    frame_count += 1
+    
     if not ret:
         print("Kan geen frame lezen van de camera.")
         break
@@ -18,24 +23,38 @@ while True:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, 1.1, 5, minSize=(50, 50))
 
-    for (x, y, w, h) in faces:
+    current_results = []
+
+    for i, (x, y, w, h) in enumerate(faces):
         face = frame[y:y+h, x:x+w]
 
-        try:
-            result = DeepFace.analyze(face, actions=['age', 'gender', 'emotion'], enforce_detection=False)
-            
-            age = result[0]['age']
-            gender = result[0]['dominant_gender']
-            emotion = result[0]['dominant_emotion']
+        if frame_count % 10 == 0:
+            try:
+                result = DeepFace.analyze(face, actions=['age', 'gender', 'emotion'], enforce_detection=False)
+                age = result[0]['age']
+                gender = result[0]['dominant_gender']
+                emotion = result[0]['dominant_emotion']
+                current_results.append((x, y, w, h, gender, age, emotion))
+            except Exception as e:
+                print("Analyse mislukt:", e)
+                current_results.append((x, y, w, h, None, None, None))
+        else:
+            if i < len(last_results):
+                current_results.append(last_results[i])
+            else:
+                current_results.append((x, y, w, h, None, None, None))
 
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+    for res in current_results:
+        x, y, w, h, gender, age, emotion = res
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        if gender and age:
             cv2.putText(frame, f"{gender}, {age} jaar", (x, y - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+        if emotion:
             cv2.putText(frame, f"{emotion}", (x, y + h + 20),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
 
-        except Exception as e:
-            print("Analyse mislukt:", e)
+    last_results = current_results
 
     cv2.imshow('Face Analysis', frame)
 
