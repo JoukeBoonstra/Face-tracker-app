@@ -47,12 +47,9 @@ while True:
     for res in current_results:
         x, y, w, h, gender, age, emotion = res
         cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-        if gender and age:
-            cv2.putText(frame, f"{gender}, {age} jaar", (x, y - 10),
+        if gender and age and emotion:
+            cv2.putText(frame, f"{gender}, {age} jaar, {emotion}", (x, y - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-        if emotion:
-            cv2.putText(frame, f"{emotion}", (x, y + h + 20),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
 
     last_results = current_results
 
