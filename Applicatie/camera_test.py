@@ -50,6 +50,9 @@ while True:
         if gender and age and emotion:
             cv2.putText(frame, f"{gender}, {age} jaar, {emotion}", (x, y - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+            
+            cv2.putText(frame, str(result[0]['emotion']), (x, y + h + 20),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
 
     last_results = current_results
 
