@@ -17,6 +17,25 @@ if not cap.isOpened():
 frame_count = 0
 last_results = []
 
+gender_map = {
+    "Man": "Man",
+    "Male": "Man",
+    "man": "Man",
+    "Female": "Vrouw",
+    "female": "Vrouw",
+    "Vrouw": "Vrouw"
+}
+
+emotion_map = {
+    "happy": "Blij",
+    "sad": "Verdrietig",
+    "angry": "Boos",
+    "surprise": "Verrast",
+    "fear": "Bang",
+    "disgust": "Walging",
+    "neutral": "Neutraal"
+}
+
 while True:
     ret, frame = cap.read()
     frame_count += 1
@@ -46,8 +65,10 @@ while True:
                     )
 
                     age = int(result[0]['age'])
-                    gender = result[0]['dominant_gender']
-                    emotion = result[0]['dominant_emotion']
+                    # gender = result[0]['dominant_gender']
+                    # emotion = result[0]['dominant_emotion']
+                    gender = gender_map.get(result[0]['dominant_gender'], "Onbekend")
+                    emotion = emotion_map.get(result[0]['dominant_emotion'], "Onbekend")
 
                     current_results.append((x, y, w, h, gender, age, emotion))
 
@@ -102,6 +123,8 @@ while True:
                 cv2.putText(frame, label, (x1, y1 - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
 
+    cv2.putText(frame, "Druk op Q om het programma af te sluiten", (10, 35),
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 3)
 
     cv2.imshow("Face + Object Tracking", frame)
 
