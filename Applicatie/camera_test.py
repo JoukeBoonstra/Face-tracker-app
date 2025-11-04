@@ -2,8 +2,7 @@ import cv2
 from deepface import DeepFace
 from ultralytics import YOLO
 
-# YOLO model laden (klein en snel)
-yolo = YOLO("yolov8n.pt")
+yolo = YOLO("yolov8m.pt")
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
@@ -31,7 +30,6 @@ while True:
 
     current_results = []
 
-    # ✅ Eerst: gezicht detecteren en analyseren
     if len(faces) > 0:
         for i, (x, y, w, h) in enumerate(faces):
             face = frame[y:y+h, x:x+w]
@@ -62,7 +60,6 @@ while True:
                 else:
                     current_results.append((x, y, w, h, None, None, None))
 
-        # ✅ Tekenen van face + analyses
         for res in current_results:
             x, y, w, h, gender, age, emotion = res
 
@@ -72,7 +69,6 @@ while True:
                 cv2.putText(frame, f"{gender}, {age} jaar, {emotion}",
                             (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
-                # Tekst op basis van emotie 🧠
                 if emotion == "happy":
                     reactie = "Wat ben je vandaag vrolijk!"
                 elif emotion == "sad":
@@ -94,21 +90,20 @@ while True:
         last_results = current_results
 
     else:
-        # ⚠️ Geen gezicht gevonden → YOLO objectdetectie uitvoeren
-        results = yolo(frame, verbose=False)
+        results = yolo(frame, stream=True)
 
-        for result in results:
-            for box in result.boxes:
+        for r in results:
+            for box in r.boxes:
+                cls = int(box.cls[0])
+                label = r.names[cls]
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
-                confidence = float(box.conf[0])
-                label = result.names[int(box.cls[0])]
 
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 255), 2)
-                cv2.putText(frame, f"{label} ({confidence:.2f})",
-                            (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
+                cv2.putText(frame, label, (x1, y1 - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
 
 
-    cv2.imshow("Face + Object Analysis", frame)
+    cv2.imshow("Face + Object Tracking", frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
