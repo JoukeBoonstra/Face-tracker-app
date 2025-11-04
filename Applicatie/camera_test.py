@@ -65,6 +65,9 @@ while True:
         if gender and age and emotion:
             cv2.putText(frame, f"{gender}, {age} jaar, {emotion}",
                         (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+            
+            # cv2.putText(frame, str(result[0]['emotion']), (x, y + h + 20),
+            #             cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
 
             if emotion == "happy":
                 reactie = "Wat ben je vandaag vrolijk!"
@@ -72,8 +75,14 @@ while True:
                 reactie = "Het is bijna weekend, nog even doorzetten"
             elif emotion == "angry":
                 reactie = "Ik begrijp het, het is maandagochtend"
+            elif emotion == "surprise":
+                reactie = "Is het eerder weekend?"
+            elif emotion == "fear":
+                reactie = "Is het later weekend?"
+            elif emotion == "disgust":
+                reactie = "Vakantie is zeker voorbij?"
             else:
-                reactie = ""
+                reactie = "Kin gebeure"
 
             cv2.putText(frame, reactie, (x, y + h + 40),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
