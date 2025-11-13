@@ -65,8 +65,6 @@ while True:
                     )
 
                     age = int(result[0]['age'])
-                    # gender = result[0]['dominant_gender']
-                    # emotion = result[0]['dominant_emotion']
                     gender = gender_map.get(result[0]['dominant_gender'], "Onbekend")
                     emotion = emotion_map.get(result[0]['dominant_emotion'], "Onbekend")
 
@@ -90,22 +88,30 @@ while True:
                 cv2.putText(frame, f"{gender}, {age} jaar, {emotion}",
                             (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
-                if emotion == "happy":
-                    reactie = "Wat ben je vandaag vrolijk!"
-                elif emotion == "sad":
-                    reactie = "Het is bijna weekend, nog even doorzetten"
-                elif emotion == "angry":
-                    reactie = "Ik begrijp het, het is maandagochtend"
-                elif emotion == "surprise":
-                    reactie = "Is het eerder weekend?"
-                elif emotion == "fear":
-                    reactie = "Is het later weekend?"
-                elif emotion == "disgust":
-                    reactie = "Vakantie is zeker voorbij?"
+                if emotion == "Blij":
+                    line1 = "Je bent geschikt voor de opleiding Mediavormgever"
+                elif emotion == "Verdrietig":
+                    line1 = "Je bent geschikt voor de opleiding Software Developer"
+                elif emotion == "Boos":
+                    line1 = "Je bent geschikt voor de opleiding Systeembeheer"
+                elif emotion == "Verrast":
+                    line1 = "Je bent geschikt voor de opleiding Mediavormgever"
+                elif emotion == "Bang":
+                    line1 = "Je bent geschikt voor de opleiding Mediavormgever"
+                elif emotion == "Walging":
+                    line1 = "Je bent geschikt voor de opleiding Mediavormgever"
                 else:
-                    reactie = "Kin gebeure"
+                    line1 = "Je bent geschikt voor de opleiding Software Developer"
 
-                cv2.putText(frame, reactie, (x, y + h + 40),
+                line2 = "Dit resultaat is niet serieus, maar wel een leuke feature"
+
+                base_x = x
+                base_y = y + h + 40
+
+                cv2.putText(frame, line1, (base_x, base_y),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
+
+                cv2.putText(frame, line2, (base_x, base_y + 25),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
         
         last_results = current_results
